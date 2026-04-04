@@ -59,7 +59,7 @@ Open the site, register a test account, and log in to the admin panel to add new
 
 ## Credits
 
-- **Design:** [Horuxia](https://github.com/horuxia)
+- **Design:** [Horuxia](https://github.com/ph4ntasm93)
 - **Development:** [Powerpuff](https://github.com/PowerpuffIO)
 
 ---

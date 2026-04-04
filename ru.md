@@ -59,7 +59,7 @@
 
 ## Авторы
 
-- **Дизайн:** [Horuxia](https://github.com/horuxia)
+- **Дизайн:** [Horuxia](https://github.com/ph4ntasm93)
 - **Разработка:** [Powerpuff](https://github.com/PowerpuffIO)
 
 ---
