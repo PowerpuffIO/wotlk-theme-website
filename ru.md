@@ -4,7 +4,7 @@
   <a href="https://wow2.powerpuff.pro/"><img src="https://img.shields.io/badge/Смотреть_демо-5865F2?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Смотреть демо" /></a>
 </p>
 
-# Acore-www — сайт для приватных серверов WoW 3.3.5a
+# wotlk-theme - сайт для приватных серверов WoW 3.3.5a
 
 Лёгкий PHP-фронтенд для реалмов на **AzerothCore** (или совместимых): регистрация по **SRP6**, новости, загрузка клиента, статус реалма, ладдер игроков, голосование (MMORating), тикеты и админ-панель. Интерфейс **RU/EN** (переключатель языка в шапке).
 
@@ -40,18 +40,18 @@
    ```
 
 3. **Отредактируйте** `configs/config.php`:
-   - `SITE_DB_*` — база сайта (из шага 2).
-   - `AUTH_DB_*` — база **auth** AzerothCore.
-   - `CHARACTERS_DB_*` — база **characters** AzerothCore.
+   - `SITE_DB_*` - база сайта (из шага 2).
+   - `AUTH_DB_*` - база **auth** AzerothCore.
+   - `CHARACTERS_DB_*` - база **characters** AzerothCore.
    - `SERVER_NAME`, `REALM_NAME`, `REALM_RATE`, `UPTIME_REALM_ID`, `SITE_PUBLIC_URL` (публичный URL для писем и ссылок).
    - Почта: `MAIL_*` и при необходимости SMTP.
    - По желанию: `CAPTCHA_*` (см. комментарии в конфиге), ключи MMORating задаются в **Админка → Голосование**.
 
-4. **Права** — пользователь веб-сервера должен иметь запись в `storage/news/` (картинки новостей).
+4. **Права** - пользователь веб-сервера должен иметь запись в `storage/news/` (картинки новостей).
 
-5. **Веб-сервер** — корень документов на эту папку; включите **mod_rewrite** (Apache) или настройте nginx `try_files` на `index.php`.
+5. **Веб-сервер** - корень документов на эту папку; включите **mod_rewrite** (Apache) или настройте nginx `try_files` на `index.php`.
 
-6. **Администратор** — выставьте `role = 1` у нужного пользователя в таблице `users` (БД сайта), чтобы открывался `/profile/adminpanel`.
+6. **Администратор** - выставьте `role = 1` у нужного пользователя в таблице `users` (БД сайта), чтобы открывался `/profile/adminpanel`.
 
 7. Если база уже была со старой схемой, при необходимости выполните `sql/migration_discord_widget.sql` для ключей настроек Discord.
 

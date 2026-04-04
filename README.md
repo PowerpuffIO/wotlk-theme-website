@@ -4,7 +4,7 @@
   <a href="https://wow2.powerpuff.pro/"><img src="https://img.shields.io/badge/View_demo-5865F2?style=for-the-badge&logo=googlechrome&logoColor=white" alt="View demo" /></a>
 </p>
 
-# Acore-www — website for WoW 3.3.5a private servers
+# wotlk-theme - website for WoW 3.3.5a private servers
 
 A lightweight PHP front-end for **AzerothCore** (or compatible) realms: registration with **SRP6**, news, downloads, realm status, player ladder, voting (MMORating), tickets, and an admin panel. UI is **RU/EN** (language switch in the navbar).
 
@@ -40,18 +40,18 @@ A lightweight PHP front-end for **AzerothCore** (or compatible) realms: registra
    ```
 
 3. **Edit** `configs/config.php`:
-   - `SITE_DB_*` — website database (from step 2).
-   - `AUTH_DB_*` — AzerothCore **auth** database.
-   - `CHARACTERS_DB_*` — AzerothCore **characters** database.
+   - `SITE_DB_*` - website database (from step 2).
+   - `AUTH_DB_*` - AzerothCore **auth** database.
+   - `CHARACTERS_DB_*` - AzerothCore **characters** database.
    - `SERVER_NAME`, `REALM_NAME`, `REALM_RATE`, `UPTIME_REALM_ID`, `SITE_PUBLIC_URL` (public URL used in emails and links).
    - Mail: `MAIL_*` and optional SMTP.
    - Optional: `CAPTCHA_*` (see comments in config), MMORating keys are set in **Admin → Voting**.
 
-4. **Permissions** — ensure the web user can write to `storage/news/` (news images).
+4. **Permissions** - ensure the web user can write to `storage/news/` (news images).
 
-5. **Web server** — point document root here; enable **mod_rewrite** (Apache) or configure nginx `try_files` to `index.php`.
+5. **Web server** - point document root here; enable **mod_rewrite** (Apache) or configure nginx `try_files` to `index.php`.
 
-6. **Admin user** — set `role = 1` for your user in the `users` table (site DB) to access `/profile/adminpanel`.
+6. **Admin user** - set `role = 1` for your user in the `users` table (site DB) to access `/profile/adminpanel`.
 
 7. If you already had an older DB, run `sql/migration_discord_widget.sql` if needed for Discord settings keys.
 
