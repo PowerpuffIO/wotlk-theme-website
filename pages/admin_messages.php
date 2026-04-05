@@ -46,13 +46,13 @@ include dirname(__DIR__) . '/partials/admin_nav.php';
     <form method="post" action="<?= h(base_url('profile/adminpanel/ticket-close')) ?>" class="inline-form">
       <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
       <input type="hidden" name="ticket_id" value="<?= (int)$tid ?>">
-      <button type="submit">close</button>
+      <button type="submit" class="admin-inline-secondary"><?= h(__t('admin_close')) ?></button>
     </form>
     <?php endif; ?>
     <form method="post" action="<?= h(base_url('profile/adminpanel/ticket-del')) ?>" class="inline-form" onsubmit="return confirm('ok');">
       <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
       <input type="hidden" name="ticket_id" value="<?= (int)$tid ?>">
-      <button type="submit">delete</button>
+      <button type="submit" class="admin-row-btn admin-row-btn-del"><?= h(__t('admin_delete')) ?></button>
     </form>
   </div>
   <?php endif; ?>

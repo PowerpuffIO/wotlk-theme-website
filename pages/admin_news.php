@@ -41,13 +41,15 @@ if (isset($_GET['edit'])) {
   <ul class="admin-list">
     <?php foreach ($list as $row): ?>
     <li>
-      <?= h($row['title_ru']) ?>
-      <a href="<?= h(base_url('profile/adminpanel/news?edit=' . (int)$row['id'])) ?>">edit</a>
-      <form method="post" action="<?= h(base_url('profile/adminpanel/news-del')) ?>" class="inline-form" onsubmit="return confirm('ok');">
-        <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
-        <input type="hidden" name="id" value="<?= (int)$row['id'] ?>">
-        <button type="submit">del</button>
-      </form>
+      <span class="admin-list-news-title"><?= h($row['title_ru']) ?></span>
+      <div class="admin-list-actions">
+        <a class="admin-row-btn admin-row-btn-edit" href="<?= h(base_url('profile/adminpanel/news?edit=' . (int)$row['id'])) ?>"><?= h(__t('admin_edit')) ?></a>
+        <form method="post" action="<?= h(base_url('profile/adminpanel/news-del')) ?>" class="inline-form" onsubmit="return confirm('ok');">
+          <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
+          <input type="hidden" name="id" value="<?= (int)$row['id'] ?>">
+          <button type="submit" class="admin-row-btn admin-row-btn-del"><?= h(__t('admin_delete')) ?></button>
+        </form>
+      </div>
     </li>
     <?php endforeach; ?>
   </ul>

@@ -9,6 +9,7 @@ include dirname(__DIR__) . '/partials/profile_sidebar.php';
 ?>
   <h1><?= h(__t('profile_title')) ?></h1>
   <div class="profile-info">
+    <p class="profile-balance"><strong><?= h(__t('vote_balance')) ?>:</strong> <span class="profile-balance-value"><?= (int)($u['balance'] ?? 0) ?></span></p>
     <p><strong><?= h(__t('profile_chars')) ?>:</strong> <?= (int)$chars ?></p>
     <p><strong><?= h(__t('profile_regdate')) ?>:</strong> <?= h($df) ?></p>
   </div>
