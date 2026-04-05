@@ -988,19 +988,79 @@ nav > ul > li.nav-lang ~ li.right {
 .ladder-page {
   max-width: 1100px;
 }
-.ladder-grid {
-  display: grid;
-  gap: 24px;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+.ladder-tabs {
+  position: relative;
 }
-.ladder-section-wide {
-  grid-column: 1 / -1;
+.ladder-tab-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
-.ladder-heading {
-  font-size: 18px;
-  margin: 0 0 10px;
-  color: #00d8ff;
+.ladder-tab-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(58, 158, 200, 0.35);
+}
+.ladder-tab-btn {
+  display: inline-block;
+  padding: 8px 14px;
+  font-size: 14px;
   font-family: 'Deltha', sans-serif;
+  color: #8ecae6;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(58, 158, 200, 0.45);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.ladder-tab-btn:hover {
+  color: #00d8ff;
+  border-color: #3a9ec8;
+}
+#ladder-tab-pt:checked ~ .ladder-tab-nav label[for="ladder-tab-pt"],
+#ladder-tab-hk:checked ~ .ladder-tab-nav label[for="ladder-tab-hk"],
+#ladder-tab-a2:checked ~ .ladder-tab-nav label[for="ladder-tab-a2"],
+#ladder-tab-a3:checked ~ .ladder-tab-nav label[for="ladder-tab-a3"],
+#ladder-tab-a5:checked ~ .ladder-tab-nav label[for="ladder-tab-a5"] {
+  color: #00d8ff;
+  background: rgba(58, 158, 200, 0.15);
+  border-color: #3a9ec8;
+  box-shadow: inset 0 0 0 1px rgba(0, 216, 255, 0.2);
+}
+.ladder-tab-panel {
+  display: none;
+  overflow-x: auto;
+  max-height: min(70vh, 720px);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+#ladder-tab-pt:checked ~ #ladder-panel-pt,
+#ladder-tab-hk:checked ~ #ladder-panel-hk,
+#ladder-tab-a2:checked ~ #ladder-panel-a2,
+#ladder-tab-a3:checked ~ #ladder-panel-a3,
+#ladder-tab-a5:checked ~ #ladder-panel-a5 {
+  display: block;
+}
+@media (max-width: 640px) {
+  .ladder-tab-nav {
+    gap: 6px;
+  }
+  .ladder-tab-btn {
+    flex: 1 1 calc(50% - 4px);
+    min-width: min(100%, 140px);
+    text-align: center;
+    font-size: 13px;
+    padding: 8px 10px;
+  }
 }
 .ladder-table {
   width: 100%;

@@ -1,4 +1,13 @@
 <?php
+if (!defined('ARENA_TYPE_2V2')) {
+    define('ARENA_TYPE_2V2', 0);
+}
+if (!defined('ARENA_TYPE_3V3')) {
+    define('ARENA_TYPE_3V3', 1);
+}
+if (!defined('ARENA_TYPE_5V5')) {
+    define('ARENA_TYPE_5V5', 2);
+}
 
 function ladder_format_playtime($seconds) {
     $sec = max(0, (int)$seconds);

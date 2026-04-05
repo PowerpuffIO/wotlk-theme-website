@@ -8,9 +8,22 @@ $a5 = ladder_arena_by_type(ARENA_TYPE_5V5, 10);
 ?>
 <div class="page-wrap ladder-page">
   <h1><?= h(__t('ladder_title')) ?></h1>
-  <div class="ladder-grid">
-    <section class="ladder-section">
-      <h2 class="ladder-heading"><?= h(__t('ladder_top_playtime')) ?></h2>
+  <div class="ladder-tabs">
+    <input type="radio" name="ladder-tab" id="ladder-tab-pt" class="ladder-tab-input" checked>
+    <input type="radio" name="ladder-tab" id="ladder-tab-hk" class="ladder-tab-input">
+    <input type="radio" name="ladder-tab" id="ladder-tab-a2" class="ladder-tab-input">
+    <input type="radio" name="ladder-tab" id="ladder-tab-a3" class="ladder-tab-input">
+    <input type="radio" name="ladder-tab" id="ladder-tab-a5" class="ladder-tab-input">
+
+    <div class="ladder-tab-nav">
+      <label class="ladder-tab-btn" for="ladder-tab-pt"><?= h(__t('ladder_top_playtime')) ?></label>
+      <label class="ladder-tab-btn" for="ladder-tab-hk"><?= h(__t('ladder_top_hk')) ?></label>
+      <label class="ladder-tab-btn" for="ladder-tab-a2"><?= h(__t('ladder_arena_2')) ?></label>
+      <label class="ladder-tab-btn" for="ladder-tab-a3"><?= h(__t('ladder_arena_3')) ?></label>
+      <label class="ladder-tab-btn" for="ladder-tab-a5"><?= h(__t('ladder_arena_5')) ?></label>
+    </div>
+
+    <div class="ladder-tab-panel" id="ladder-panel-pt">
       <table class="ladder-table">
         <thead>
           <tr>
@@ -34,9 +47,9 @@ $a5 = ladder_arena_by_type(ARENA_TYPE_5V5, 10);
           <?php endif; ?>
         </tbody>
       </table>
-    </section>
-    <section class="ladder-section">
-      <h2 class="ladder-heading"><?= h(__t('ladder_top_hk')) ?></h2>
+    </div>
+
+    <div class="ladder-tab-panel" id="ladder-panel-hk">
       <table class="ladder-table">
         <thead>
           <tr>
@@ -60,9 +73,9 @@ $a5 = ladder_arena_by_type(ARENA_TYPE_5V5, 10);
           <?php endif; ?>
         </tbody>
       </table>
-    </section>
-    <section class="ladder-section">
-      <h2 class="ladder-heading"><?= h(__t('ladder_arena_2')) ?></h2>
+    </div>
+
+    <div class="ladder-tab-panel" id="ladder-panel-a2">
       <table class="ladder-table">
         <thead>
           <tr>
@@ -86,9 +99,9 @@ $a5 = ladder_arena_by_type(ARENA_TYPE_5V5, 10);
           <?php endif; ?>
         </tbody>
       </table>
-    </section>
-    <section class="ladder-section">
-      <h2 class="ladder-heading"><?= h(__t('ladder_arena_3')) ?></h2>
+    </div>
+
+    <div class="ladder-tab-panel" id="ladder-panel-a3">
       <table class="ladder-table">
         <thead>
           <tr>
@@ -112,9 +125,9 @@ $a5 = ladder_arena_by_type(ARENA_TYPE_5V5, 10);
           <?php endif; ?>
         </tbody>
       </table>
-    </section>
-    <section class="ladder-section ladder-section-wide">
-      <h2 class="ladder-heading"><?= h(__t('ladder_arena_5')) ?></h2>
+    </div>
+
+    <div class="ladder-tab-panel" id="ladder-panel-a5">
       <table class="ladder-table">
         <thead>
           <tr>
@@ -138,6 +151,6 @@ $a5 = ladder_arena_by_type(ARENA_TYPE_5V5, 10);
           <?php endif; ?>
         </tbody>
       </table>
-    </section>
+    </div>
   </div>
 </div>
