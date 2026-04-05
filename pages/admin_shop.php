@@ -24,7 +24,7 @@ try {
   <form method="post" action="<?= h(base_url('profile/adminpanel/shop-item-add')) ?>" class="site-form admin-form">
     <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
     <label><?= h(__t('shop_admin_subcat')) ?></label>
-    <select name="subcategory_id" required>
+    <select name="subcategory_id" class="theme-select" required>
       <option value=""><?= h(__t('shop_admin_subcat')) ?></option>
       <?php foreach ($subs as $s): ?>
       <?php
@@ -46,8 +46,13 @@ try {
   <ul class="admin-list shop-admin-list">
     <?php foreach ($list as $row): ?>
     <li>
-      <span class="admin-list-news-title">#<?= (int)$row['item_entry'] ?> — <?= (int)$row['price'] ?> — <?= h($lang === 'ru' ? $row['cat_ru'] : $row['cat_en']) ?> / <?= h($lang === 'ru' ? $row['sub_ru'] : $row['sub_en']) ?></span>
+      <span class="admin-list-news-title">#<?= (int)$row['item_entry'] ?> — <?= (int)$row['price'] ?> / <?= (int)$row['quantity'] ?> — <?= h($lang === 'ru' ? $row['cat_ru'] : $row['cat_en']) ?> / <?= h($lang === 'ru' ? $row['sub_ru'] : $row['sub_en']) ?></span>
       <div class="admin-list-actions">
+        <button type="button" class="admin-row-btn admin-row-btn-edit shop-item-edit-open"
+          data-id="<?= (int)$row['id'] ?>"
+          data-entry="<?= (int)$row['item_entry'] ?>"
+          data-price="<?= (int)$row['price'] ?>"
+          data-qty="<?= (int)$row['quantity'] ?>"><?= h(__t('shop_admin_edit_btn')) ?></button>
         <form method="post" action="<?= h(base_url('profile/adminpanel/shop-item-del')) ?>" class="inline-form" onsubmit="return confirm('ok');">
           <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
           <input type="hidden" name="id" value="<?= (int)$row['id'] ?>">
@@ -60,4 +65,38 @@ try {
     <li><span class="admin-list-news-title"><?= h(__t('shop_no_items')) ?></span></li>
     <?php endif; ?>
   </ul>
+
+  <dialog class="admin-bonus-dialog shop-edit-dialog" id="shop-edit-dialog">
+    <form method="post" action="<?= h(base_url('profile/adminpanel/shop-item-update')) ?>" class="admin-bonus-form">
+      <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
+      <input type="hidden" name="id" id="shop-edit-id" value="">
+      <h2 class="admin-bonus-title"><?= h(__t('shop_admin_edit_dialog')) ?></h2>
+      <p class="admin-bonus-user"><?= h(__t('shop_admin_entry')) ?>: <strong id="shop-edit-entry">—</strong></p>
+      <label class="admin-bonus-label" for="shop-edit-price"><?= h(__t('shop_admin_price')) ?></label>
+      <input type="number" name="price" id="shop-edit-price" class="admin-bonus-input" min="0" value="0" required>
+      <label class="admin-bonus-label" for="shop-edit-qty"><?= h(__t('shop_admin_qty')) ?></label>
+      <input type="number" name="quantity" id="shop-edit-qty" class="admin-bonus-input" min="1" value="1" required>
+      <div class="admin-bonus-actions">
+        <button type="submit" class="shop-buy-btn"><?= h(__t('save')) ?></button>
+        <button type="button" class="admin-bonus-cancel" id="shop-edit-cancel"><?= h(__t('admin_close')) ?></button>
+      </div>
+    </form>
+  </dialog>
+  <script>
+(function(){
+  var dlg = document.getElementById('shop-edit-dialog');
+  if (!dlg) return;
+  document.getElementById('shop-edit-cancel').addEventListener('click', function() { dlg.close(); });
+  document.querySelectorAll('.shop-item-edit-open').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.getElementById('shop-edit-id').value = btn.getAttribute('data-id');
+      document.getElementById('shop-edit-entry').textContent = btn.getAttribute('data-entry');
+      document.getElementById('shop-edit-price').value = btn.getAttribute('data-price');
+      document.getElementById('shop-edit-qty').value = btn.getAttribute('data-qty');
+      dlg.showModal();
+      document.getElementById('shop-edit-price').focus();
+    });
+  });
+})();
+  </script>
 <?php include dirname(__DIR__) . '/partials/profile_sidebar_end.php'; ?>

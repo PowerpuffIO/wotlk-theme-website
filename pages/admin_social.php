@@ -17,7 +17,7 @@ if (!in_array($widgetTheme, ['dark', 'light'], true)) {
     <label for="discord_guild_id"><?= h(__t('admin_social_guild_id')) ?></label>
     <input type="text" id="discord_guild_id" name="discord_guild_id" value="<?= h($guildId) ?>" inputmode="numeric" autocomplete="off" placeholder="123456789012345678">
     <label for="discord_widget_theme"><?= h(__t('admin_social_widget_theme')) ?></label>
-    <select id="discord_widget_theme" name="discord_widget_theme">
+    <select id="discord_widget_theme" name="discord_widget_theme" class="theme-select">
       <option value="dark" <?= $widgetTheme === 'dark' ? ' selected' : '' ?>><?= h(__t('admin_social_theme_dark')) ?></option>
       <option value="light" <?= $widgetTheme === 'light' ? ' selected' : '' ?>><?= h(__t('admin_social_theme_light')) ?></option>
     </select>

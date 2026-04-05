@@ -130,6 +130,8 @@ switch ($parts[0]) {
                 include __DIR__ . '/pages/admin_social.php';
             } elseif ($tab === 'shop') {
                 include __DIR__ . '/pages/admin_shop.php';
+            } elseif ($tab === 'users') {
+                include __DIR__ . '/pages/admin_users.php';
             } else {
                 include __DIR__ . '/pages/admin_dash.php';
             }

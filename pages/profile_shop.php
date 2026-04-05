@@ -17,7 +17,7 @@ include dirname(__DIR__) . '/partials/profile_sidebar.php';
   <?php else: ?>
   <div class="shop-char-bar">
     <label class="shop-char-label" for="shop-char-select"><?= h(__t('shop_char_for_purchase')) ?></label>
-    <select id="shop-char-select" class="shop-char-select shop-char-select-global">
+    <select id="shop-char-select" class="theme-select shop-char-select shop-char-select-global">
       <option value=""><?= h(__t('shop_select_char')) ?></option>
       <?php foreach ($chars as $ch): ?>
       <option value="<?= h($ch['name']) ?>"><?= h($ch['name']) ?> (<?= (int)$ch['level'] ?>)</option>
@@ -27,7 +27,7 @@ include dirname(__DIR__) . '/partials/profile_sidebar.php';
   <div class="shop-filter-bar" id="shop-filter-bar">
     <div class="shop-filter-field">
       <label class="shop-filter-label" for="shop-filter-cat"><?= h(__t('shop_filter_category')) ?></label>
-      <select id="shop-filter-cat" class="shop-filter-select">
+      <select id="shop-filter-cat" class="theme-select shop-filter-select">
         <option value=""><?= h(__t('shop_filter_all')) ?></option>
         <?php foreach ($filterTree as $fc): ?>
         <option value="<?= (int)$fc['id'] ?>"><?= h($fc['name']) ?></option>
@@ -36,7 +36,7 @@ include dirname(__DIR__) . '/partials/profile_sidebar.php';
     </div>
     <div class="shop-filter-field">
       <label class="shop-filter-label" for="shop-filter-sub"><?= h(__t('shop_filter_subcategory')) ?></label>
-      <select id="shop-filter-sub" class="shop-filter-select">
+      <select id="shop-filter-sub" class="theme-select shop-filter-select">
         <option value=""><?= h(__t('shop_filter_all')) ?></option>
       </select>
     </div>

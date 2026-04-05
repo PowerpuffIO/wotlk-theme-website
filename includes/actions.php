@@ -90,6 +90,14 @@ function handle_post($route) {
             action_admin_shop_item_del();
             return true;
         }
+        if ($sub === 'shop-item-update') {
+            action_admin_shop_item_update();
+            return true;
+        }
+        if ($sub === 'users-bonus') {
+            action_admin_users_bonus();
+            return true;
+        }
     }
     if ($a === 'reset-password' && ($parts[1] ?? '') === 'confirm') {
         action_reset_confirm();
@@ -484,4 +492,44 @@ function action_admin_shop_item_del() {
         site_pdo()->prepare('DELETE FROM shop_items WHERE id = ?')->execute([$id]);
     }
     redirect(base_url('profile/adminpanel/shop'));
+}
+
+function action_admin_shop_item_update() {
+    $id = (int)($_POST['id'] ?? 0);
+    $price = max(0, (int)($_POST['price'] ?? 0));
+    $qty = max(1, (int)($_POST['quantity'] ?? 1));
+    if ($id < 1) {
+        redirect(base_url('profile/adminpanel/shop'));
+        return;
+    }
+    site_pdo()->prepare('UPDATE shop_items SET price = ?, quantity = ? WHERE id = ?')->execute([$price, $qty, $id]);
+    $_SESSION['flash_ok'] = __t('shop_admin_edit_ok');
+    redirect(base_url('profile/adminpanel/shop'));
+}
+
+function action_admin_users_bonus() {
+    $uid = (int)($_POST['user_id'] ?? 0);
+    $amount = (int)($_POST['amount'] ?? 0);
+    $page = max(1, (int)($_POST['return_page'] ?? 1));
+    $qs = $page > 1 ? ('?p=' . $page) : '';
+    if ($uid < 1 || $amount < 1) {
+        $_SESSION['flash_err'] = __t('error_generic');
+        redirect(base_url('profile/adminpanel/users' . $qs));
+        return;
+    }
+    if ($amount > 2000000000) {
+        $_SESSION['flash_err'] = __t('error_generic');
+        redirect(base_url('profile/adminpanel/users' . $qs));
+        return;
+    }
+    $pdo = site_pdo();
+    $st = $pdo->prepare('UPDATE users SET balance = balance + ? WHERE id = ?');
+    $st->execute([$amount, $uid]);
+    if ($st->rowCount() < 1) {
+        $_SESSION['flash_err'] = __t('error_generic');
+        redirect(base_url('profile/adminpanel/users' . $qs));
+        return;
+    }
+    $_SESSION['flash_ok'] = __t('admin_users_bonus_ok');
+    redirect(base_url('profile/adminpanel/users' . $qs));
 }
