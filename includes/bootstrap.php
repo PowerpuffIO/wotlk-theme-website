@@ -29,7 +29,7 @@ if (empty($_SESSION['lang'])) {
 
 if (!empty($_SESSION['uid'])) {
     try {
-        $st = site_pdo()->prepare('SELECT id, username, email, role, balance, created_at FROM users WHERE id = ?');
+        $st = site_pdo()->prepare('SELECT id, username, email, role, balance, auth_account_id, created_at FROM users WHERE id = ?');
         $st->execute([(int)$_SESSION['uid']]);
         $row = $st->fetch();
         if ($row) {
