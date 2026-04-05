@@ -17,6 +17,9 @@ unset($_SESSION['flash_ok'], $_SESSION['flash_err']);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= h($pageTitle ?? '') ?></title>
+  <?php if ($cu): ?>
+  <meta name="csrf-token" content="<?= h(csrf_token()) ?>">
+  <?php endif; ?>
   <link rel="stylesheet" href="<?= h(base_url('Assets/css/remixicon.css')) ?>">
   <link rel="stylesheet" href="<?= h(base_url('Assets/css/style.css')) ?>">
 </head>
@@ -70,5 +73,17 @@ if ($fe === 'captcha') {
 <footer class="site-footer">
 <p><?= h(SERVER_NAME) ?> &middot; <?= h(__t('footer_year')) ?></p>
 </footer>
+<div id="site-toast" class="site-toast" role="status" aria-live="polite" hidden></div>
+<script>
+function siteToast(msg, kind) {
+  var el = document.getElementById('site-toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'site-toast site-toast--' + (kind === 'err' ? 'err' : 'ok');
+  el.hidden = false;
+  clearTimeout(window._siteToastT);
+  window._siteToastT = setTimeout(function () { el.hidden = true; }, 4200);
+}
+</script>
 </body>
 </html>

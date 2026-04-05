@@ -83,6 +83,12 @@ function set_lang($lang) {
 }
 
 function active_lang() {
+    if (!empty($_COOKIE['lang']) && in_array($_COOKIE['lang'], ['ru', 'en'], true)) {
+        if (($_SESSION['lang'] ?? '') !== $_COOKIE['lang']) {
+            $_SESSION['lang'] = $_COOKIE['lang'];
+        }
+        return $_COOKIE['lang'];
+    }
     return $_SESSION['lang'] ?? detect_lang();
 }
 

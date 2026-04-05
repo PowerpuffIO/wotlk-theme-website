@@ -5,12 +5,16 @@ function handle_post($route) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         return false;
     }
+    $parts = explode('/', trim($route, '/'));
+    if (($parts[0] ?? '') === 'profile' && ($parts[1] ?? '') === 'shop' && ($parts[2] ?? '') === 'buy') {
+        require_once __DIR__ . '/shop.php';
+        shop_handle_buy();
+    }
     if (!csrf_verify($_POST['csrf'] ?? '')) {
         $_SESSION['flash_err'] = 'CSRF';
         redirect($_SERVER['HTTP_REFERER'] ?? base_url());
         return true;
     }
-    $parts = explode('/', trim($route, '/'));
     $a = $parts[0] ?? '';
 
     if ($a === 'register' && ($parts[1] ?? '') === '') {
@@ -72,6 +76,18 @@ function handle_post($route) {
         }
         if ($sub === 'ticket-del') {
             action_admin_ticket_del();
+            return true;
+        }
+        if ($sub === 'shop-save') {
+            action_admin_shop_save();
+            return true;
+        }
+        if ($sub === 'shop-item-add') {
+            action_admin_shop_item_add();
+            return true;
+        }
+        if ($sub === 'shop-item-del') {
+            action_admin_shop_item_del();
             return true;
         }
     }
@@ -440,4 +456,32 @@ function action_admin_ticket_del() {
         $pdo->prepare('DELETE FROM tickets WHERE id = ?')->execute([$tid]);
     }
     redirect(base_url('profile/adminpanel/messages'));
+}
+
+function action_admin_shop_save() {
+    setting_set('shop_enabled', isset($_POST['shop_enabled']) ? '1' : '0');
+    redirect(base_url('profile/adminpanel/shop'));
+}
+
+function action_admin_shop_item_add() {
+    $sub = (int)($_POST['subcategory_id'] ?? 0);
+    $entry = (int)($_POST['item_entry'] ?? 0);
+    $price = max(0, (int)($_POST['price'] ?? 0));
+    $qty = max(1, (int)($_POST['quantity'] ?? 1));
+    $pdo = site_pdo();
+    $st = $pdo->prepare('SELECT id FROM shop_categories WHERE id = ? AND parent_id > 0');
+    $st->execute([$sub]);
+    if ($st->fetch() && $entry > 0 && $price >= 0) {
+        $pdo->prepare('INSERT INTO shop_items (subcategory_id, item_entry, price, quantity, enabled, sort_order) VALUES (?, ?, ?, ?, 1, 0)')
+            ->execute([$sub, $entry, $price, $qty]);
+    }
+    redirect(base_url('profile/adminpanel/shop'));
+}
+
+function action_admin_shop_item_del() {
+    $id = (int)($_POST['id'] ?? 0);
+    if ($id > 0) {
+        site_pdo()->prepare('DELETE FROM shop_items WHERE id = ?')->execute([$id]);
+    }
+    redirect(base_url('profile/adminpanel/shop'));
 }

@@ -96,6 +96,16 @@ switch ($parts[0]) {
             ob_start();
             include __DIR__ . '/pages/profile_vote.php';
             $content = ob_get_clean();
+        } elseif ($sub === 'shop') {
+            require_once __DIR__ . '/includes/shop.php';
+            if (!shop_is_enabled()) {
+                http_response_code(404);
+                exit;
+            }
+            $pageTitle = __t('menu_shop');
+            ob_start();
+            include __DIR__ . '/pages/profile_shop.php';
+            $content = ob_get_clean();
         } elseif ($sub === 'message') {
             $pageTitle = __t('messages_title');
             ob_start();
@@ -118,6 +128,8 @@ switch ($parts[0]) {
                 include __DIR__ . '/pages/admin_messages.php';
             } elseif ($tab === 'social') {
                 include __DIR__ . '/pages/admin_social.php';
+            } elseif ($tab === 'shop') {
+                include __DIR__ . '/pages/admin_shop.php';
             } else {
                 include __DIR__ . '/pages/admin_dash.php';
             }

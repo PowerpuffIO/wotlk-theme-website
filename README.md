@@ -21,12 +21,13 @@ A lightweight PHP front-end for **AzerothCore** (or compatible) realms: registra
 | **Profile** | Overview, character count from game DB. |
 | **Settings** | Email change flow, password reset request. |
 | **Vote** | MMORating.top API check + bonus balance (admin: API key, bonus amount). |
+| **Shop** | Profile tab (when enabled): bonus balance purchases, categories/subcategories, item links to Wowhead (EN/RU). Delivery via **SOAP** `.send items` to the selected character’s in-game mail. |
 | **Messages** | User tickets; staff replies in admin. |
-| **Admin panel** | Dashboard stats, news CRUD (with image upload), vote/MMORating settings, download/realmlist strings, tickets, **Social** (Discord server ID + widget theme). |
+| **Admin panel** | Dashboard stats, news CRUD (with image upload), vote/MMORating settings, download/realmlist strings, tickets, **Social** (Discord server ID + widget theme), **Shop** (SOAP credentials, mail text, enable/disable, items). |
 
 ## Requirements
 
-- **PHP** 7.4+ with extensions: `pdo_mysql`, `json`, `session`, `mbstring`, **`gmp`** (required for SRP6 registration), `openssl` (if used).
+- **PHP** 7.4+ with extensions: `pdo_mysql`, `json`, `session`, `mbstring`, **`gmp`** (required for SRP6 registration), **`soap`** (for the in-game shop), `openssl` (if used).
 - **MySQL** / MariaDB — three logical databases: **site** (this app), **auth**, **characters** (AzerothCore).
 - Web server with **URL rewrite** to `index.php` (see `.htaccess` for Apache; nginx needs equivalent `try_files`).
 
@@ -55,7 +56,33 @@ A lightweight PHP front-end for **AzerothCore** (or compatible) realms: registra
 
 7. If you already had an older DB, run `sql/migration_discord_widget.sql` if needed for Discord settings keys.
 
-Open the site, register a test account, and log in to the admin panel to add news, download links, Discord guild ID (Server Settings → Widget in Discord), and MMORating API key.
+8. For the **shop**, import `sql/migration_shop.sql` (creates `shop_categories`, `shop_items`, default settings, and seeded categories). In **Admin → Shop**, enable the shop, set SOAP host/port/URI/login/password (see below), and add items (item entry ID, price in bonus balance, subcategory).
+
+Open the site, register a test account, and log in to the admin panel to add news, download links, Discord guild ID (Server Settings → Widget in Discord), MMORating API key, and optional shop settings.
+
+## Shop & SOAP (AzerothCore)
+
+**Website**
+
+- Enable the shop and fill SOAP fields under **Admin → Shop**. Default URI is often `urn:AC` (match `worldserver.conf`).
+- Bonus balance is stored in the site `users.balance` table (same currency as voting rewards).
+- Purchases call the worldserver command: `.send items <CharacterName> "<subject>" "<body>" <itemEntry>[:qty]`.
+
+**Game server (`worldserver.conf`)**
+
+- Set `SOAP.Enabled = 1`.
+- Set `SOAP.IP` to an address the **web server can reach** (often `127.0.0.1` if the site and worldserver are on the same machine).
+- `SOAP.Port` must match the port you enter in the admin panel (default **7878** is common).
+- Create a GM account (or dedicated SOAP account) with permission to run server console commands; put its username/password in the admin SOAP fields.
+
+**Firewall / hosting**
+
+- Allow outbound TCP from the PHP host to `SOAP.IP:SOAP.Port` (or bind SOAP to localhost and run the site on the same host).
+
+**Wowhead links**
+
+- English: `https://www.wowhead.com/wotlk/item=<entry>`
+- Russian: `https://www.wowhead.com/wotlk/ru/item=<entry>/`
 
 ## Credits
 
