@@ -10,9 +10,17 @@ function acore_username_upper($username) {
     return strtoupper($username);
 }
 
+function acore_password_upper($password) {
+    if (function_exists('mb_strtoupper')) {
+        return mb_strtoupper((string)$password, 'UTF-8');
+    }
+    return strtoupper((string)$password);
+}
+
 function acore_calculate_verifier($username, $password, $salt) {
     $u = acore_username_upper($username);
-    $h1 = sha1($u . ':' . $password, true);
+    $p = acore_password_upper($password);
+    $h1 = sha1($u . ':' . $p, true);
     $h2 = sha1($salt . $h1, true);
     $N = acore_N();
     $g = gmp_init(7);

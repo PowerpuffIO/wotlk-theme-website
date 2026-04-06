@@ -6,6 +6,16 @@ function handle_post($route) {
         return false;
     }
     $parts = explode('/', trim($route, '/'));
+    if (($parts[0] ?? '') === 'payment' && ($parts[1] ?? '') === 'pally-notify') {
+        require_once __DIR__ . '/pally.php';
+        pally_handle_webhook();
+        return true;
+    }
+    if (($parts[0] ?? '') === 'profile' && ($parts[1] ?? '') === 'balance' && (($parts[2] ?? '') === 'pally-return' || ($parts[2] ?? '') === 'pally-fail')) {
+        require_once __DIR__ . '/pally.php';
+        pally_handle_balance_return(($parts[2] ?? '') === 'pally-fail');
+        return true;
+    }
     if (($parts[0] ?? '') === 'profile' && ($parts[1] ?? '') === 'shop' && ($parts[2] ?? '') === 'buy') {
         require_once __DIR__ . '/shop.php';
         shop_handle_buy();
@@ -28,6 +38,18 @@ function handle_post($route) {
     if ($a === 'profile' && ($parts[1] ?? '') === 'settings' && ($parts[2] ?? '') === 'password-request') {
         require_login();
         action_password_request();
+        return true;
+    }
+    if ($a === 'profile' && ($parts[1] ?? '') === 'characters-realm') {
+        require_login();
+        $r = (int)($_POST['realm'] ?? 1);
+        $_SESSION['characters_realm'] = ($r === 2) ? 2 : 1;
+        redirect($_SERVER['HTTP_REFERER'] ?? base_url('profile'));
+        return true;
+    }
+    if ($a === 'profile' && ($parts[1] ?? '') === 'balance' && ($parts[2] ?? '') === 'create') {
+        require_login();
+        action_pally_topup_create();
         return true;
     }
     if ($a === 'profile' && ($parts[1] ?? '') === 'vote' && ($parts[2] ?? '') === 'claim') {
@@ -96,6 +118,10 @@ function handle_post($route) {
         }
         if ($sub === 'users-bonus') {
             action_admin_users_bonus();
+            return true;
+        }
+        if ($sub === 'users-import') {
+            action_admin_users_import();
             return true;
         }
     }
@@ -229,14 +255,36 @@ function action_login() {
     $st = site_pdo()->prepare('SELECT * FROM users WHERE username = ?');
     $st->execute([$uname]);
     $u = $st->fetch();
-    if (!$u || !password_verify($pass, $u['password_hash'])) {
+    $ok = false;
+    if ($u) {
+        if (password_verify($pass, $u['password_hash'])) {
+            $ok = true;
+        } else {
+            $sa = auth_pdo()->prepare('SELECT salt, verifier FROM account WHERE id = ? AND username = ? LIMIT 1');
+            $sa->execute([(int)$u['auth_account_id'], $uname]);
+            $ar = $sa->fetch();
+            if ($ar && acore_verifier_match($uname, $pass, $ar['salt'], $ar['verifier'])) {
+                $ok = true;
+                $newHash = password_hash($pass, PASSWORD_DEFAULT);
+                site_pdo()->prepare('UPDATE users SET password_hash = ? WHERE id = ?')->execute([$newHash, (int)$u['id']]);
+                $u['password_hash'] = $newHash;
+            }
+        }
+    }
+    if (!$u || !$ok) {
         $_SESSION['flash_err'] = 'login';
         redirect(base_url('login'));
         return;
     }
+    try {
+        [$salt, $verifier] = acore_make_registration_data($uname, $pass);
+        auth_pdo()->prepare('UPDATE account SET salt = ?, verifier = ? WHERE id = ?')->execute([$salt, $verifier, (int)$u['auth_account_id']]);
+    } catch (Throwable $e) {
+    }
     session_regenerate_id(true);
     $_SESSION['uid'] = (int)$u['id'];
     $_SESSION['user'] = $u;
+    $_SESSION['characters_realm'] = 1;
     $ret = $_GET['return'] ?? $_POST['return'] ?? '';
     if (is_string($ret) && str_starts_with($ret, '/') && !str_starts_with($ret, '//')) {
         redirect($ret);
@@ -570,4 +618,129 @@ function action_admin_users_bonus() {
     }
     $_SESSION['flash_ok'] = __t('admin_users_bonus_ok');
     redirect(base_url('profile/adminpanel/users' . $qs));
+}
+
+function action_admin_import_make_email($email, $username, $authId) {
+    $src = trim((string)$email);
+    if (!filter_var($src, FILTER_VALIDATE_EMAIL)) {
+        $baseName = preg_replace('/[^a-z0-9._-]+/i', '', strtolower((string)$username));
+        if ($baseName === '') {
+            $baseName = 'player' . (int)$authId;
+        }
+        $src = $baseName . '+' . (int)$authId . '@import.local';
+    }
+    $candidate = $src;
+    $i = 1;
+    $st = site_pdo()->prepare('SELECT id FROM users WHERE email = ? LIMIT 1');
+    while (true) {
+        $st->execute([$candidate]);
+        if (!$st->fetch()) {
+            return $candidate;
+        }
+        $parts = explode('@', $src, 2);
+        $local = $parts[0] ?? 'user';
+        $domain = $parts[1] ?? 'import.local';
+        $candidate = $local . '+' . $i . '@' . $domain;
+        $i++;
+    }
+}
+
+function action_admin_users_import() {
+    if (!defined('ENABLE_ADMIN_ACCOUNT_IMPORT') || !ENABLE_ADMIN_ACCOUNT_IMPORT) {
+        $_SESSION['flash_err'] = __t('admin_users_import_disabled');
+        redirect(base_url('profile/adminpanel/users'));
+        return;
+    }
+    $ins = 0;
+    $sk = 0;
+    $all = [];
+    $batch = defined('ADMIN_ACCOUNT_IMPORT_BATCH_SIZE') ? (int)ADMIN_ACCOUNT_IMPORT_BATCH_SIZE : 200;
+    if ($batch < 1) {
+        $batch = 200;
+    }
+    if ($batch > 1000) {
+        $batch = 1000;
+    }
+    $cursor = (int)setting_get('admin_import_auth_cursor', '0');
+    $sql = 'SELECT id, username, email, reg_mail, joindate FROM account WHERE id > ? ORDER BY id ASC LIMIT ' . $batch;
+    try {
+        $stAuth = auth_pdo()->prepare($sql);
+        $stAuth->execute([$cursor]);
+        $all = $stAuth->fetchAll();
+    } catch (Throwable $e) {
+        $_SESSION['flash_err'] = __t('admin_users_import_err');
+        redirect(base_url('profile/adminpanel/users'));
+        return;
+    }
+    if (!$all) {
+        setting_set('admin_import_auth_cursor', '0');
+        $_SESSION['flash_ok'] = __t('admin_users_import_empty');
+        redirect(base_url('profile/adminpanel/users'));
+        return;
+    }
+    $pdo = site_pdo();
+    $ckAuth = $pdo->prepare('SELECT id FROM users WHERE auth_account_id = ? LIMIT 1');
+    $ck = $pdo->prepare('SELECT id FROM users WHERE username = ? LIMIT 1');
+    $in = $pdo->prepare('INSERT INTO users (username, email, password_hash, auth_account_id, role, balance, lang, created_at) VALUES (?, ?, ?, ?, 0, 0, ?, ?)');
+    $lastId = $cursor;
+    foreach ($all as $r) {
+        $aid = (int)($r['id'] ?? 0);
+        if ($aid > $lastId) {
+            $lastId = $aid;
+        }
+        $uname = acore_username_upper(trim((string)($r['username'] ?? '')));
+        if ($aid < 1 || $uname === '') {
+            $sk++;
+            continue;
+        }
+        $ckAuth->execute([$aid]);
+        if ($ckAuth->fetch()) {
+            $sk++;
+            continue;
+        }
+        $ck->execute([$uname]);
+        if ($ck->fetch()) {
+            $sk++;
+            continue;
+        }
+        $mail = action_admin_import_make_email((string)($r['email'] ?: $r['reg_mail']), $uname, $aid);
+        $hash = password_hash(bin2hex(random_bytes(24)), PASSWORD_DEFAULT);
+        $createdAt = trim((string)($r['joindate'] ?? ''));
+        if ($createdAt === '' || strtotime($createdAt) === false) {
+            $createdAt = date('Y-m-d H:i:s');
+        }
+        try {
+            $in->execute([$uname, $mail, $hash, $aid, DEFAULT_LANG, $createdAt]);
+            $ins++;
+        } catch (Throwable $e) {
+            $sk++;
+        }
+    }
+    setting_set('admin_import_auth_cursor', (string)$lastId);
+    $_SESSION['flash_ok'] = sprintf(__t('admin_users_import_done'), $ins, $sk) . ' ' . sprintf(__t('admin_users_import_progress'), count($all), $lastId);
+    redirect(base_url('profile/adminpanel/users'));
+}
+
+function action_pally_topup_create() {
+    require_once __DIR__ . '/pally.php';
+    $u = current_user();
+    if (!$u) {
+        redirect(base_url('login'));
+        return;
+    }
+    $amountRaw = str_replace(',', '.', (string)($_POST['amount_rub'] ?? ''));
+    $amount = (float)$amountRaw;
+    $r = pally_create_topup((int)$u['id'], $amount);
+    if (!$r['ok']) {
+        if (($r['err'] ?? '') === 'config') {
+            $_SESSION['flash_err'] = __t('balance_err_config');
+        } elseif (($r['err'] ?? '') === 'amount') {
+            $_SESSION['flash_err'] = __t('balance_err_amount');
+        } else {
+            $_SESSION['flash_err'] = __t('balance_err_api');
+        }
+        redirect(base_url('profile/balance'));
+        return;
+    }
+    redirect((string)$r['redirect']);
 }
