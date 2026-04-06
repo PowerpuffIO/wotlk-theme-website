@@ -178,7 +178,8 @@ function action_register() {
     $email = trim($_POST['email'] ?? '');
     $pass = $_POST['password'] ?? '';
     $pass2 = $_POST['password2'] ?? '';
-    if (strlen($username) < 3 || strlen($username) > 32) {
+    $uname = acore_username_upper($username);
+    if (!preg_match('/^[0-9A-Z_-]+$/', $uname) || strlen($uname) < 2 || strlen($uname) > 16) {
         $_SESSION['flash_err'] = 'user';
         redirect(base_url('register'));
         return;
@@ -188,12 +189,11 @@ function action_register() {
         redirect(base_url('register'));
         return;
     }
-    if ($pass !== $pass2 || strlen($pass) < 6) {
+    if ($pass !== $pass2 || strlen($pass) < 4 || strlen($pass) > 16) {
         $_SESSION['flash_err'] = 'pass';
         redirect(base_url('register'));
         return;
     }
-    $uname = acore_username_upper($username);
     $pdoSite = site_pdo();
     $st = $pdoSite->prepare('SELECT id FROM users WHERE username = ? OR email = ?');
     $st->execute([$uname, $email]);
@@ -214,8 +214,8 @@ function action_register() {
     $hash = password_hash($pass, PASSWORD_DEFAULT);
     try {
         $auth->beginTransaction();
-        $ins = $auth->prepare('INSERT INTO account (username, salt, verifier, joindate, email, expansion) VALUES (?, ?, ?, NOW(), ?, 2)');
-        $ins->execute([$uname, $salt, $verifier, $email]);
+        $ins = $auth->prepare('INSERT INTO account (username, salt, verifier, joindate, email, expansion) VALUES (?, UNHEX(?), UNHEX(?), NOW(), ?, 2)');
+        $ins->execute([$uname, bin2hex($salt), bin2hex($verifier), $email]);
         $aid = (int)$auth->lastInsertId();
         $auth->commit();
     } catch (Throwable $e) {
@@ -278,7 +278,7 @@ function action_login() {
     }
     try {
         [$salt, $verifier] = acore_make_registration_data($uname, $pass);
-        auth_pdo()->prepare('UPDATE account SET salt = ?, verifier = ? WHERE id = ?')->execute([$salt, $verifier, (int)$u['auth_account_id']]);
+        auth_pdo()->prepare('UPDATE account SET salt = UNHEX(?), verifier = UNHEX(?) WHERE id = ?')->execute([bin2hex($salt), bin2hex($verifier), (int)$u['auth_account_id']]);
     } catch (Throwable $e) {
     }
     session_regenerate_id(true);
@@ -310,7 +310,7 @@ function action_reset_confirm() {
     $token = $_POST['token'] ?? '';
     $pass = $_POST['password'] ?? '';
     $pass2 = $_POST['password2'] ?? '';
-    if ($pass !== $pass2 || strlen($pass) < 6) {
+    if ($pass !== $pass2 || strlen($pass) < 4 || strlen($pass) > 16) {
         $_SESSION['flash_err'] = 'pass';
         redirect(base_url('reset-password?token=' . urlencode($token)));
         return;
@@ -327,7 +327,7 @@ function action_reset_confirm() {
     $hash = password_hash($pass, PASSWORD_DEFAULT);
     try {
         $auth = auth_pdo();
-        $auth->prepare('UPDATE account SET salt = ?, verifier = ? WHERE id = ?')->execute([$salt, $verifier, $u['auth_account_id']]);
+        $auth->prepare('UPDATE account SET salt = UNHEX(?), verifier = UNHEX(?) WHERE id = ?')->execute([bin2hex($salt), bin2hex($verifier), $u['auth_account_id']]);
         site_pdo()->prepare('UPDATE users SET password_hash = ?, reset_token = NULL, reset_expires = NULL WHERE id = ?')->execute([$hash, $u['id']]);
     } catch (Throwable $e) {
         $_SESSION['flash_err'] = 'upd';

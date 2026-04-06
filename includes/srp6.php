@@ -20,13 +20,13 @@ function acore_password_upper($password) {
 function acore_calculate_verifier($username, $password, $salt) {
     $u = acore_username_upper($username);
     $p = acore_password_upper($password);
-    $h1 = sha1($u . ':' . $p, true);
+    $h1 = sha1(acore_username_upper($u . ':' . $p), true);
     $h2 = sha1($salt . $h1, true);
     $N = acore_N();
     $g = gmp_init(7);
-    $x = gmp_import($h2, 1, GMP_LSW_FIRST | GMP_LITTLE_ENDIAN);
+    $x = gmp_import($h2, 1, GMP_LSW_FIRST);
     $v = gmp_powm($g, $x, $N);
-    $b = gmp_export($v, 1, GMP_LITTLE_ENDIAN);
+    $b = gmp_export($v, 1, GMP_LSW_FIRST);
     return str_pad(substr($b, 0, 32), 32, "\0", STR_PAD_RIGHT);
 }
 
