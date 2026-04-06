@@ -16,4 +16,8 @@ $ret = $_GET['return'] ?? '';
     <?php captcha_render_form_fields(); ?>
     <button type="submit"><?= h(__t('nav_login')) ?></button>
   </form>
+  <div class="form-page-links">
+    <a href="<?= h(base_url('forgot-password')) ?>"><?= h(__t('auth_forgot_password')) ?></a>
+    <a href="<?= h(base_url('register')) ?>"><?= h(__t('auth_register')) ?></a>
+  </div>
 </div>

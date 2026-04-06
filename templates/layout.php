@@ -1,10 +1,4 @@
 <?php
-/*
-Credits (English, in templates/layout.php):
-Block site-credits with lang="en":
-Design by Horuxia · Discord: Horuxia
-Developed by Powerpuff · Discord: powerpuff_io
-*/
 $cu = current_user();
 $isRu = active_lang() === 'ru';
 $langOther = $isRu ? 'en' : 'ru';
@@ -45,7 +39,7 @@ unset($_SESSION['flash_ok'], $_SESSION['flash_err']);
         <li><a onclick="closeMobileMenu()" href="<?= h(base_url('login')) ?>"><i class="ri-login-box-line"></i> <?= h(__t('nav_login')) ?></a></li>
         <li><a onclick="closeMobileMenu()" href="<?= h(base_url('register')) ?>"><i class="ri-user-add-line"></i> <?= h(__t('nav_register')) ?></a></li>
         <?php endif; ?>
-        <li><a onclick="closeMobileMenu();location.reload();return false;" href="#" id="resetpwBtn"><i class="ri-reset-left-line"></i> <?= h(__t('nav_reset')) ?></a></li>
+        <li><a onclick="closeMobileMenu()" href="<?= h(base_url($cu ? 'profile/settings' : 'forgot-password')) ?>" id="resetpwBtn"><i class="ri-reset-left-line"></i> <?= h(__t('nav_reset')) ?></a></li>
       </ul>
     </li>
   </ul>

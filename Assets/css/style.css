@@ -14,7 +14,7 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
 
 body {
-  background-color:#093655;   /* háttér szín ha vége a képnek */
+  background-color:#093655;
   background-image:url("../images/hero.jpg");
   background-repeat:no-repeat; 
   background-position:top center;
@@ -31,7 +31,6 @@ body.site-body {
   width: 100%;
 }
 
-/* Header only: direct child of body so nested <nav> (pagination etc.) is not fixed to top */
 body > nav {
   font-family: "Lato", sans-serif;
   text-shadow: 1px 1px 9px rgba(0,0,0,0.5);
@@ -179,11 +178,6 @@ body > nav ul ul li:hover > ul {
 .hero-center {
   padding: 20px;
   width: auto;
- /* border-radius: 10px;
-  background: rgba(14, 23, 35, 0.6);
-  border: 1px solid #3a9ec8;
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);*/
 }
 .logo_text {
   color: #fff;
@@ -482,6 +476,46 @@ body > nav > ul > li.nav-lang ~ li.right {
 .form-page h1, .download-page h1, .ladder-page h1, .profile-layout h1, .admin-nav + h1 {
   font-family: 'Deltha', sans-serif;
   margin-bottom: 16px;
+}
+.form-page-hint {
+  margin: 0 0 16px;
+  max-width: 420px;
+  color: #b8c9d9;
+  font-size: 14px;
+  line-height: 1.45;
+  font-family: "Lato", sans-serif;
+}
+.form-page-links {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: "Lato", sans-serif;
+  font-size: 14px;
+}
+.form-page-links a {
+  color: #8ecae6;
+  text-decoration: none;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+}
+.form-page-links a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+.form-page-links-line {
+  color: #b8c9d9;
+}
+.form-page-links-line a {
+  color: #8ecae6;
+}
+.form-page .site-form > button[type="submit"] {
+  display: block;
+  margin-top: 18px;
 }
 .site-form label {
   display: block;
@@ -1256,12 +1290,12 @@ body > nav > ul > li.nav-lang ~ li.right {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  width: 400px;          /* teljes szélesség */
-  margin-top: 10px;     /* kis távolság a szöveg alatt */
+  width: 400px;
+  margin-top: 10px;
 }
 
 .progress-track {
-  display: flex;          /* flex, hogy a sávok egymás mellett legyenek */
+  display: flex;
   width: 100%;
   max-width: 400px;
   height: 25px;
@@ -1271,7 +1305,6 @@ body > nav > ul > li.nav-lang ~ li.right {
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
 }
 
-/* Fill sávok */
 .progress-fill {
   display: flex;
   align-items: center;
@@ -1282,22 +1315,16 @@ body > nav > ul > li.nav-lang ~ li.right {
   white-space: nowrap;
 }
 
-/* Horde */
 .horde {
   background-image: url("../images/horde_bar.jpg");
   background-size: cover;
-  border-right: 1px solid #000; /* elválasztás */
+  border-right: 1px solid #000;
 }
 
-/* Alliance */
 .alliance {
   background-image: url("../images/alliance_bar.jpg");
   background-size: cover;
 }
-
-/*========================================================*/
-/*==================== MOBILE VIEW =======================*/
-/*========================================================*/
 
 @media (max-width: 768px) {
   body {

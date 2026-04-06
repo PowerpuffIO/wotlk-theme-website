@@ -103,7 +103,38 @@ function handle_post($route) {
         action_reset_confirm();
         return true;
     }
+    if ($a === 'forgot-password' && ($parts[1] ?? '') === '') {
+        action_forgot_password_request();
+        return true;
+    }
     return false;
+}
+
+function action_forgot_password_request() {
+    if (!captcha_verify_request()) {
+        $_SESSION['flash_err'] = 'captcha';
+        redirect(base_url('forgot-password'));
+        return;
+    }
+    $email = trim((string)($_POST['email'] ?? ''));
+    if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $_SESSION['flash_err'] = __t('error_invalid_email');
+        redirect(base_url('forgot-password'));
+        return;
+    }
+    $st = site_pdo()->prepare('SELECT id, email FROM users WHERE email = ?');
+    $st->execute([$email]);
+    $u = $st->fetch();
+    if ($u) {
+        $token = bin2hex(random_bytes(32));
+        $exp = date('Y-m-d H:i:s', time() + 3600);
+        site_pdo()->prepare('UPDATE users SET reset_token = ?, reset_expires = ? WHERE id = ?')->execute([$token, $exp, $u['id']]);
+        $link = rtrim(SITE_PUBLIC_URL, '/') . base_url('reset-password?token=' . urlencode($token));
+        $html = '<p><a href="' . h($link) . '">' . h($link) . '</a></p>';
+        send_mail_raw($u['email'], 'Password reset', $html);
+    }
+    $_SESSION['flash_ok'] = __t('forgot_password_sent');
+    redirect(base_url('forgot-password'));
 }
 
 function action_register() {
@@ -223,7 +254,7 @@ function action_password_request() {
     $link = rtrim(SITE_PUBLIC_URL, '/') . base_url('reset-password?token=' . $token);
     $html = '<p><a href="' . h($link) . '">' . h($link) . '</a></p>';
     send_mail_raw($u['email'], 'Password reset', $html);
-    $_SESSION['flash_ok'] = 'mail';
+    $_SESSION['flash_ok'] = __t('flash_ok_mail');
     redirect(base_url('profile/settings'));
 }
 
@@ -255,7 +286,7 @@ function action_reset_confirm() {
         redirect(base_url('reset-password?token=' . urlencode($token)));
         return;
     }
-    $_SESSION['flash_ok'] = 'pwd';
+    $_SESSION['flash_ok'] = __t('flash_ok_pwd');
     redirect(base_url('login'));
 }
 
@@ -286,7 +317,7 @@ function action_vote_claim() {
         return;
     }
     $_SESSION['user']['balance'] = (int)$u['balance'] + $bonus;
-    $_SESSION['flash_ok'] = 'vote';
+    $_SESSION['flash_ok'] = __t('flash_ok_vote');
     redirect(base_url('profile/vote'));
 }
 

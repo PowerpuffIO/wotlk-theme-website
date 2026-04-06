@@ -18,4 +18,8 @@ if (current_user()) {
     <?php captcha_render_form_fields(); ?>
     <button type="submit"><?= h(__t('register_btn')) ?></button>
   </form>
+  <div class="form-page-links">
+    <span class="form-page-links-line"><?= h(__t('auth_already_registered')) ?> <a href="<?= h(base_url('login')) ?>"><?= h(__t('auth_login_short')) ?></a></span>
+    <a href="<?= h(base_url('forgot-password')) ?>"><?= h(__t('auth_recover_password')) ?></a>
+  </div>
 </div>

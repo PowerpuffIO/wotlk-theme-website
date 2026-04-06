@@ -60,6 +60,12 @@ switch ($parts[0]) {
         include __DIR__ . '/pages/register.php';
         $content = ob_get_clean();
         break;
+    case 'forgot-password':
+        $pageTitle = __t('forgot_password_title');
+        ob_start();
+        include __DIR__ . '/pages/forgot_password.php';
+        $content = ob_get_clean();
+        break;
     case 'download':
         $pageTitle = __t('download_title');
         ob_start();
