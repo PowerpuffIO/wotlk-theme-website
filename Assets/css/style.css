@@ -31,7 +31,8 @@ body.site-body {
   width: 100%;
 }
 
-nav {
+/* Header only: direct child of body so nested <nav> (pagination etc.) is not fixed to top */
+body > nav {
   font-family: "Lato", sans-serif;
   text-shadow: 1px 1px 9px rgba(0,0,0,0.5);
   position: fixed;
@@ -41,7 +42,7 @@ nav {
   width:100%;
   transition: all 0.2s ease-in-out;
 }
-nav::before{
+body > nav::before{
   content:"";
   position:absolute;
   inset:0;
@@ -50,7 +51,7 @@ nav::before{
   -webkit-backdrop-filter: blur(10px);
   z-index:-1;
 }
-nav::after {
+body > nav::after {
   content: "";
   position: absolute;
   bottom: 0;
@@ -63,7 +64,7 @@ nav::after {
     drop-shadow(0 0 8px rgba(0,162,255,0.6));
 }
 
-nav > ul {
+body > nav > ul {
   list-style: none;
   display: flex;
   justify-content: center;
@@ -72,11 +73,11 @@ nav > ul {
   margin: 0;
   padding: 0;
 }
-nav > ul > li {
+body > nav > ul > li {
   position: relative;
   transition: all 0.1s ease-in-out;
 }
-nav > ul > li > a {
+body > nav > ul > li > a {
   display: block;
   padding: 25px 20px;
   color: #FFFFFF;
@@ -87,16 +88,16 @@ nav > ul > li > a {
   transition: all 0.1s ease-in-out;
   transform-origin: center center;
 }
-nav > ul > li > a:hover {
+body > nav > ul > li > a:hover {
   transform: scale(1.20);
   color: #00a2ff;
   text-shadow: 1px 1px 10px rgba(0, 162, 255, 0.9);
 }
-nav > ul > li.right {
+body > nav > ul > li.right {
   position: absolute;
   right: 30px;
 }
-nav ul ul{
+body > nav ul ul{
   list-style:none;
   position:absolute;
   top:100%;
@@ -112,10 +113,10 @@ nav ul ul{
   padding:0;
   margin:0;
 }
-nav ul ul li {
+body > nav ul ul li {
   width: 100%;
 }
-nav ul ul li a {
+body > nav ul ul li a {
   font-size: 14px;
   font-weight: 500;
   display: block;
@@ -125,17 +126,17 @@ nav ul ul li a {
   transition: all 0.15s ease-in-out;
   transform-origin: center center;
 }
-nav ul ul li a:hover {
+body > nav ul ul li a:hover {
   transform: scale(1.20);
   color: #00a2ff;
   text-shadow: 1px 1px 10px rgba(0, 162, 255, 0.9);
 }
-nav ul li:hover > ul {
+body > nav ul li:hover > ul {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
 }
-nav ul ul ul {
+body > nav ul ul ul {
   list-style: none;
   position: absolute;
   left: 100%;
@@ -145,7 +146,7 @@ nav ul ul ul {
   transform: translateX(-10px);
   transition: all 0.25s ease;
 }
-nav ul ul li:hover > ul {
+body > nav ul ul li:hover > ul {
   opacity: 1;
   visibility: visible;
   transform: translateX(0);
@@ -362,23 +363,112 @@ main {
   cursor:pointer;
 }
 footer, .site-footer {
-  text-align:center;
-  padding:20px;
-  background:#0d141d;
-  margin-top:auto;
-  font-size:12px;
-  flex-shrink:0;
+  text-align: center;
+  padding: 14px 10px 16px;
+  background: #0d141d;
+  margin-top: auto;
+  font-size: 12px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: 100%;
+}
+.site-footer-inner {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+.site-footer-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 20px;
+  width: 100%;
+}
+.site-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px 18px;
+  text-align: left;
+  flex: 0 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: 0 10px 0 0;
+}
+.site-footer-links a {
+  color: #8ecae6;
+  text-decoration: none;
+  font-size: 13px;
+}
+.site-footer-links a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+.site-footer-credit {
+  margin: 0;
+  margin-left: auto;
+  flex: 0 0 auto;
+  text-align: right;
+  color: #9aa4b2;
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 0 0 0 10px;
+}
+.site-footer-credit a {
+  color: #8ecae6;
+  text-decoration: none;
+}
+.site-footer-credit a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+.site-footer-copy {
+  margin: 0;
+  color: #9aa4b2;
+  text-align: center;
+  width: 100%;
+}
+.legal-page .legal-body {
+  line-height: 1.65;
+  color: #e0e6ed;
+}
+.legal-page .legal-empty {
+  color: #7a8794;
+  font-style: italic;
+  margin: 0;
+}
+.admin-legal-form textarea {
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+.admin-legal-section {
+  font-family: 'Deltha', sans-serif;
+  font-size: 1.05rem;
+  margin: 28px 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(58, 158, 200, 0.35);
+}
+.admin-legal-form .admin-legal-section:first-of-type {
+  margin-top: 8px;
 }
 .g-recaptcha, .cf-turnstile {
   margin: 16px 0;
 }
 
 
-nav > ul > li.nav-lang {
+body > nav > ul > li.nav-lang {
   position: absolute;
   right: 200px;
 }
-nav > ul > li.nav-lang ~ li.right {
+body > nav > ul > li.nav-lang ~ li.right {
   right: 30px;
 }
 .page-wrap {
@@ -1220,7 +1310,7 @@ nav > ul > li.nav-lang ~ li.right {
   .menu-icon {
     background:#0e1723;
   }
-  nav > ul {
+  body > nav > ul {
     display:none;
     flex-direction:column;
     width:100%;
@@ -1229,23 +1319,23 @@ nav > ul > li.nav-lang ~ li.right {
   #menu-toggle:checked + .menu-icon + ul {
     display:flex;
   }
-  nav > ul > li {
+  body > nav > ul > li {
     width:100%;
     text-align:left;
     border-bottom:1px solid rgba(255,255,255,0.05);
   }
-  nav > ul > li > a {
+  body > nav > ul > li > a {
     padding:18px 20px;
     font-size:15px;
     display:block;
   }
-  nav > ul > li > a:hover {
+  body > nav > ul > li > a:hover {
     margin-left: 8px;
     transform: none;
     color: #00a2ff;
     text-shadow: 1px 1px 10px rgba(0, 162, 255, 0.9);
   }
-  nav > ul > li.right, nav > ul > li.nav-lang {
+  body > nav > ul > li.right, body > nav > ul > li.nav-lang {
     position:relative;
     right:auto;
   }
@@ -1255,7 +1345,7 @@ nav > ul > li.nav-lang ~ li.right {
   .admin-nav {
     flex-direction: column;
   }
-  nav ul ul {
+  body > nav ul ul {
     position:relative;
     left:0;
     top:0;
@@ -1265,19 +1355,19 @@ nav > ul > li.nav-lang ~ li.right {
     display:none;
     background:#0e1723;
   }
-  nav ul ul li a {
+  body > nav ul ul li a {
     padding:15px 30px;
     font-size:14px;
     margin-left: 10px;
   }
-  nav ul ul li a:hover {
+  body > nav ul ul li a:hover {
     transform:none;
     margin-left: 20px;
   }
-  nav ul li:hover > ul {
+  body > nav ul li:hover > ul {
     display:block;
   }
-  nav ul ul ul {
+  body > nav ul ul ul {
     position:relative;
     left:0;
   }

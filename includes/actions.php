@@ -425,12 +425,19 @@ function action_admin_settings_save() {
         setting_set('discord_guild_id', $gid);
         $th = (string)($_POST['discord_widget_theme'] ?? 'dark');
         setting_set('discord_widget_theme', in_array($th, ['dark', 'light'], true) ? $th : 'dark');
+    } elseif ($tab === 'legal') {
+        foreach (['rules', 'terms', 'privacy'] as $slug) {
+            setting_set('legal_' . $slug . '_ru', (string)($_POST['legal_' . $slug . '_ru'] ?? ''));
+            setting_set('legal_' . $slug . '_en', (string)($_POST['legal_' . $slug . '_en'] ?? ''));
+        }
     }
     $redir = 'vote';
     if ($tab === 'download') {
         $redir = 'download';
     } elseif ($tab === 'social') {
         $redir = 'social';
+    } elseif ($tab === 'legal') {
+        $redir = 'legal';
     }
     redirect(base_url('profile/adminpanel/' . $redir));
 }

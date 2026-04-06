@@ -72,6 +72,24 @@ switch ($parts[0]) {
         include __DIR__ . '/pages/ladder.php';
         $content = ob_get_clean();
         break;
+    case 'rules':
+        ob_start();
+        $legalSlug = 'rules';
+        include __DIR__ . '/pages/legal_page.php';
+        $content = ob_get_clean();
+        break;
+    case 'terms':
+        ob_start();
+        $legalSlug = 'terms';
+        include __DIR__ . '/pages/legal_page.php';
+        $content = ob_get_clean();
+        break;
+    case 'privacy':
+        ob_start();
+        $legalSlug = 'privacy';
+        include __DIR__ . '/pages/legal_page.php';
+        $content = ob_get_clean();
+        break;
     case 'reset-password':
         $pageTitle = __t('change_password');
         ob_start();
@@ -132,6 +150,8 @@ switch ($parts[0]) {
                 include __DIR__ . '/pages/admin_shop.php';
             } elseif ($tab === 'users') {
                 include __DIR__ . '/pages/admin_users.php';
+            } elseif ($tab === 'legal') {
+                include __DIR__ . '/pages/admin_legal.php';
             } else {
                 include __DIR__ . '/pages/admin_dash.php';
             }

@@ -71,7 +71,17 @@ if ($fe === 'captcha') {
 <?= $content ?? '' ?>
 </div>
 <footer class="site-footer">
-<p><?= h(SERVER_NAME) ?> &middot; <?= h(__t('footer_year')) ?></p>
+  <div class="site-footer-inner">
+    <div class="site-footer-top">
+      <div class="site-footer-links" role="navigation" aria-label="Legal">
+        <a href="<?= h(base_url('rules')) ?>"><?= h(__t('footer_rules')) ?></a>
+        <a href="<?= h(base_url('terms')) ?>"><?= h(__t('footer_terms')) ?></a>
+        <a href="<?= h(base_url('privacy')) ?>"><?= h(__t('footer_privacy')) ?></a>
+      </div>
+      <p class="site-footer-credit"><?= h(__t('footer_developed_by')) ?> <a href="https://powerpuff.pro" target="_blank" rel="noopener noreferrer"><?= h(__t('footer_credit_powerpuff')) ?></a></p>
+    </div>
+    <p class="site-footer-copy"><?= h(SERVER_NAME) ?> &middot; <?= h(__t('footer_year')) ?></p>
+  </div>
 </footer>
 <div id="site-toast" class="site-toast" role="status" aria-live="polite" hidden></div>
 <script>

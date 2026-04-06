@@ -10,4 +10,5 @@ $at = $adminTab ?? 'dash';
   <a href="<?= h(base_url('profile/adminpanel/messages')) ?>" class="<?= $at === 'messages' ? 'active' : '' ?>"><?= h(__t('admin_messages')) ?></a>
   <a href="<?= h(base_url('profile/adminpanel/social')) ?>" class="<?= $at === 'social' ? 'active' : '' ?>"><?= h(__t('admin_social')) ?></a>
   <a href="<?= h(base_url('profile/adminpanel/shop')) ?>" class="<?= $at === 'shop' ? 'active' : '' ?>"><?= h(__t('admin_shop')) ?></a>
+  <a href="<?= h(base_url('profile/adminpanel/legal')) ?>" class="<?= $at === 'legal' ? 'active' : '' ?>"><?= h(__t('admin_legal')) ?></a>
 </div>
